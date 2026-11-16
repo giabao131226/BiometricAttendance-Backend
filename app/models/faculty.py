@@ -10,5 +10,7 @@ class Faculty(Base):
     faculty_name = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
     status = Column(Boolean, default=True)
+    deleted = Column(Boolean, default=False, nullable=False)
+    deleted_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
