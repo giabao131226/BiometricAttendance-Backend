@@ -15,5 +15,13 @@ async def create_faculty(request: Request,db: Session = Depends(get_db)):
     return await faculty_controller.create_faculty(request,db)
 
 @router.patch("/delete/{faculty_id}")
-async def delete_faculty(faculty_id: int,db: Session = Depends(get_db)):
-    return await faculty_controller.delete_faculty(faculty_id,db);
+def delete_faculty(faculty_id: int,db: Session = Depends(get_db)):
+    return faculty_controller.delete_faculty(faculty_id,db)
+
+@router.get("/detail/{faculty_id}")
+def detail_faculty(faculty_id:int,db:Session = Depends(get_db)):
+    return faculty_controller.detail_faculty(faculty_id,db)
+
+@router.patch("/edit/{faculty_id}")
+async def edit_faculty(faculty_id: int,request: Request,db: Session = Depends(get_db)):
+    return await faculty_controller.edit_faculty(faculty_id,request,db);

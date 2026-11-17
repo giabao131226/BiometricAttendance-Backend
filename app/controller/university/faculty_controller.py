@@ -23,6 +23,7 @@ def get_all_faculties(db:Session):
                     "message": "Không thể lấy dữ liệu Khoa"
                 }
             )
+
 async def create_faculty(request: Request,db: Session):
     try:
         data = await request.json()
@@ -79,7 +80,7 @@ async def create_faculty(request: Request,db: Session):
             }
         )
 
-async def delete_faculty(faculty_id: int,db: Session):
+def delete_faculty(faculty_id: int,db: Session):
     try:
         id = faculty_id;
 
@@ -117,6 +118,99 @@ async def delete_faculty(faculty_id: int,db: Session):
                 "message": "Không thể xoá khoa. Vui lòng thử lại sau."
             }
         )
-        
-    
 
+def detail_faculty(faculty_id:int,db:Session):
+    try:
+        detailFaculty = db.query(Faculty).filter(
+            Faculty.id == faculty_id,
+            Faculty.deleted == False
+        ).first()
+
+        if(detailFaculty is None):
+            raise HTTPException(
+                status_code=404,
+                detail= "Không tìm thấy khoa có mã là: "+ str(faculty_id)
+            )
+
+        return {
+            "success": True,
+            "detail": detailFaculty
+        }
+
+    except HTTPException:
+        raise
+    except:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "title": "Có lỗi xảy ra!",
+                "message": "Không thể xoá khoa. Vui lòng thử lại sau."
+            }
+        )
+
+async def edit_faculty(faculty_id: int,request: Request,db: Session):
+    try:
+        id = faculty_id;
+        data = await request.json()
+        fc = data["faculty_code"]
+        fn = data["faculty_name"]
+
+        if not fc or not fn:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "title": "Dữ liệu không hợp lệ!",
+                    "message": "Mã khoa và tên khoa không được để trống."
+                }
+            )
+    
+        faculty = db.query(Faculty).filter(
+            and_(
+                Faculty.deleted == False,
+                or_(
+                    Faculty.id == id
+                )   
+            ) 
+        ).first()
+
+        if faculty is None:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "title": "Khoa không tồn tại!",
+                    "message": "Không tồn tại Khoa có mã là "+str(id)+". Vui lòng kiểm tra lại"
+                }
+            )
+
+        faculty_code = data.get("faculty_code", "").strip()
+        faculty_name = data.get("faculty_name", "").strip()
+        description = data.get("description", "").strip()
+        status = data.get("status", True)
+
+        faculty.faculty_code = faculty_code
+        faculty.faculty_name = faculty_name
+        faculty.description = description
+        faculty.status = status
+
+        db.add(faculty); #Đưa đối tượng vào Session để chờ ghi xuống database
+        db.commit() #Xác nhận transaction và ghi dữ liệu xuống database
+        db.refresh(faculty)
+        return {
+            "success": True,
+            "title": "Cập nhật khoa thành công!",
+            "message": "Thông tin khoa đã được cập nhật thành công."
+        }
+    except HTTPException:
+        raise 
+
+    except Exception as e:
+        db.rollback()
+        print(str(e));
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "title": "Có lỗi xảy ra!",
+                "message": "Không thể cập nhật thông tin khoa. Vui lòng thử lại sau."
+            }
+        )
