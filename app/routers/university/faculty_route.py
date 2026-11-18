@@ -7,12 +7,13 @@ router = APIRouter(prefix="/faculty",tags = ["Faculty"])
 
 @router.get("")
 def list_faculties(request: Request,db: Session = Depends(get_db)):
-    currentPage,totalPage,faculties = faculty_controller.get_all_faculties(request,db)
+    currentPage,totalPage,faculties,overview = faculty_controller.get_all_faculties(request,db)
     return {
         "success": True,
         "faculties": faculties,
         "currentPage": currentPage,
-        "totalPage": totalPage
+        "totalPage": totalPage,
+        "overview": overview
     }
 
 @router.post("/create")
