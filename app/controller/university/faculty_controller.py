@@ -4,25 +4,52 @@ from sqlalchemy.orm import Session
 from app.models.faculty import Faculty
 from sqlalchemy import and_,or_
 from datetime import datetime
+import math
 
-
-def get_all_faculties(db:Session):
+def get_all_faculties(request: Request,db:Session):
     try:
+        page = int(request.query_params.get("page") or 1)
+        status = request.query_params.get("status")
+
+        if page < 1:
+            page = 1
+
         pagination = {
-            "limitItem": 10
+            "limitItem": 10,
         }
 
-        return db.query(Faculty).filter(
+        query = db.query(Faculty).filter(
             Faculty.deleted == False
-        ).all();
-    except Exception as e:
-        raise HTTPException(
-                status_code=400,
-                detail={
-                    "title": "Có lỗi xảy ra!",
-                    "message": "Không thể lấy dữ liệu Khoa"
-                }
+        )
+
+        if status is not None and status != "all" and status != "":
+            query = query.filter(
+                Faculty.status == status
             )
+
+        cntRows = query.count()
+
+        totalPage = math.ceil(cntRows / pagination["limitItem"])
+
+        faculties = query.order_by(
+            Faculty.id.asc()
+        ).offset(
+            (page - 1) * pagination["limitItem"]
+        ).limit(
+            pagination["limitItem"]
+        ).all()
+
+        return page, totalPage, faculties
+
+    except Exception as e:
+        print(str(e))
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "title": "Có lỗi xảy ra!",
+                "message": "Không thể lấy dữ liệu Khoa"
+            }
+        )
 
 async def create_faculty(request: Request,db: Session):
     try:
@@ -186,7 +213,7 @@ async def edit_faculty(faculty_id: int,request: Request,db: Session):
         faculty_code = data.get("faculty_code", "").strip()
         faculty_name = data.get("faculty_name", "").strip()
         description = data.get("description", "").strip()
-        status = data.get("status", True)
+        status = data.get("status",True)
 
         faculty.faculty_code = faculty_code
         faculty.faculty_name = faculty_name

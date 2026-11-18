@@ -5,10 +5,15 @@ from app.controller.university import faculty_controller
 
 router = APIRouter(prefix="/faculty",tags = ["Faculty"])
 
-@router.get("/")
-def list_faculties(db: Session = Depends(get_db)):
-    faculties = faculty_controller.get_all_faculties(db)
-    return {"success": True,"faculties": faculties}
+@router.get("")
+def list_faculties(request: Request,db: Session = Depends(get_db)):
+    currentPage,totalPage,faculties = faculty_controller.get_all_faculties(request,db)
+    return {
+        "success": True,
+        "faculties": faculties,
+        "currentPage": currentPage,
+        "totalPage": totalPage
+    }
 
 @router.post("/create")
 async def create_faculty(request: Request,db: Session = Depends(get_db)):
