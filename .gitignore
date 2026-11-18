@@ -1,0 +1,15 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment variables (bí mật, không được đẩy lên GitHub)
+.env
+.env.example
+# Node.js (frontend)
+node_modules/
+dist/
+
+# IDE
+.vscode/
