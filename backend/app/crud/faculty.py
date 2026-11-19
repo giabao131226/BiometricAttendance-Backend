@@ -1,4 +1,4 @@
-git add appfrom sqlalchemy.orm import Session
+from sqlalchemy.orm import Session
 from app.models.faculty import Faculty
 from app.schemas.faculty import FacultyCreate, FacultyUpdate
 

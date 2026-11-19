@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.subject import Subject
-from app.schemas.subject import SubjectCreate, SubjectUpdate
+from app.schemas.subject import SubjectCreate, SubjectPatch
 
 def get_all(db: Session):
     return db.query(Subject).all()
@@ -15,8 +15,17 @@ def create(db: Session, data: SubjectCreate):
     db.refresh(obj)
     return obj
 
+"""
 def update(db: Session, obj: Subject, data:SubjectUpdate):
     for key, value in data.model_dump().items():
+        setattr(obj, key, value)
+    db.commit()
+    db.refresh(obj)
+    return obj
+"""
+
+def patch(db: Session, obj: Subject, data: SubjectPatch):
+    for key, value in data.model_dump(exclude_unset=True).items():
         setattr(obj, key, value)
     db.commit()
     db.refresh(obj)
