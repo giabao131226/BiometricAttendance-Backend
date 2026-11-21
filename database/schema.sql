@@ -22,7 +22,7 @@ CREATE TABLE faculty (
 CREATE TABLE major (
     major_id       VARCHAR(20)  NOT NULL,
     major_name     VARCHAR(150) NOT NULL,
-         VARCHAR(20)  NOT NULL,
+    faculty_id     VARCHAR(20)  NOT NULL,
     duration_years DECIMAL(3,1) DEFAULT NULL,
     PRIMARY KEY (major_id),
     CONSTRAINT fk_major_faculty FOREIGN KEY (faculty_id) REFERENCES faculty (faculty_id)
