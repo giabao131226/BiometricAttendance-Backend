@@ -1,14 +1,23 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime,CheckConstraint
 from sqlalchemy.sql import func
 from app.database.database import Base
 
 class Faculty(Base):
     __tablename__ = "faculties"
 
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('active', 'inactive')",
+            name="check_faculty_status"
+        ),
+    )
+
     id = Column(Integer, primary_key=True, index=True)
     faculty_code = Column(String(20), unique=True, nullable=False)
     faculty_name = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(Boolean, default=True)
+    status = Column(String(10), default="active",nullable=False)
+    deleted = Column(Boolean, default=False, nullable=False)
+    deleted_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
