@@ -1,7 +1,8 @@
 from app.database.database import SessionLocal
 from sqlalchemy import text
+from sqlalchemy.orm import Session
 
-def seed_faculties():
+def seed_faculties(db: Session):
     db = SessionLocal()
 
     try:
