@@ -4,7 +4,10 @@ from sqlalchemy import text
 
 from app.database.database import engine, Base, get_db
 from app.routers.university.index_route import router as UniversityRouter
-
+from app.models.faculty import Faculty
+from app.models.major import Major
+from app.models.department import Department
+from app.models.subject import Subject
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI();
 
