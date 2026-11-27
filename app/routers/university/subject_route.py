@@ -15,3 +15,19 @@ def get_all_subjects(request: Request,db: Session = Depends(get_db)):
         "subjects": subjects,
         "overview": overview
     }
+
+@router.post("/create")
+async def create_subject(request: Request,db: Session = Depends(get_db)):
+    return await subject_controller.create_subject(request,db)
+
+@router.patch("/delete/{subject_id}")
+def delete_major(subject_id: int,db: Session = Depends(get_db)):
+    return subject_controller.delete_subject(subject_id,db)
+
+@router.get("/detail/{subject_id}")
+def detail_subject(subject_id:int,db:Session = Depends(get_db)):
+    return subject_controller.detail_subject(subject_id,db)
+
+@router.patch("/edit/{subject_id}")
+async def edit_subject(subject_id: int,request: Request,db: Session = Depends(get_db)):
+    return await subject_controller.edit_subject(subject_id,request,db)

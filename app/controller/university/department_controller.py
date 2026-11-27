@@ -246,7 +246,6 @@ def detail_department(department_id:int,db:Session):
             }
         )
 
-
 async def edit_department(id: int, request: Request, db: Session):
     try:
         data = await request.json()
